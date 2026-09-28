@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI酒馆 - 与AI角色互动</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🍺 AI酒馆</h1>
+            <p>在这里，你可以与各种AI角色聊天</p>
+        </header>
+        
+        <main class="main-content">
+            <aside class="characters-panel">
+                <h2>酒馆角色</h2>
+                <div id="characters-list" class="characters-list"></div>
+            </aside>
+            
+            <section class="chat-section">
+                <div class="chat-header" id="chat-header">
+                    <h2>选择一个角色开始聊天</h2>
+                </div>
+                
+                <div class="chat-messages" id="chat-messages"></div>
+                
+                <div class="chat-input-area">
+                    <input 
+                        type="text" 
+                        id="message-input" 
+                        placeholder="输入你的消息..."
+                        disabled
+                    >
+                    <button id="send-button" disabled>发送</button>
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
