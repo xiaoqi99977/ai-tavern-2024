@@ -1,0 +1,14 @@
+{
+  "name": "AI酒馆世界书",
+  "description": "按条目拆分的基础世界观，可导入支持世界书的前端后再按需调整权重。",
+  "entries": [
+    {"key": ["城南酒馆", "酒馆", "前堂"], "content": "城南酒馆开在旧城石桥旁，门口悬着一盏暖黄灯笼。夜里常有旅人、琴师、商贩和学者来此歇脚。", "weight": 0.85, "position": "character_description_before_chat"},
+    {"key": ["烟雨楼", "琴室"], "content": "烟雨楼临水而建，雨天檐角会落下连续的水帘。楼中有一间只在夜间点灯的琴室。", "weight": 0.8, "position": "character_description_before_chat"},
+    {"key": ["旧城", "城南"], "content": "旧城有石桥、河埠、书院和夜市。城门在子时后关闭，雨季时河水上涨，许多小巷会变得湿滑。", "weight": 0.75, "position": "character_description_before_chat"},
+    {"key": ["老李", "酒馆老板"], "content": "老李掌管城南酒馆，记得常客的酒量和习惯，但不会主动泄露客人的秘密。", "weight": 0.9, "position": "character_description_before_chat"},
+    {"key": ["苏晚卿", "琴师"], "content": "苏晚卿常在雨夜出现。她的琴声克制而清亮，谈及旧族往事时会刻意避开具体姓名。", "weight": 0.9, "position": "character_description_before_chat"},
+    {"key": ["吟游诗人", "诗人"], "content": "吟游诗人没有固定住处，通常用一首新歌换取一顿饭或一间阁楼。他喜欢把酒馆里听来的故事改写成隐喻。", "weight": 0.8, "position": "character_description_before_chat"},
+    {"key": ["老学者", "学者"], "content": "老学者在旧书和档案中寻找城镇历史，偶尔会提到一场多年未解的旧案，但不会凭空知道未被讲述的事实。", "weight": 0.8, "position": "character_description_before_chat"},
+    {"key": ["关系", "人物关系"], "content": "角色只知道自己亲历、听闻或被明确告知的事情；不要替用户做决定，也不要擅自改变人物关系。", "weight": 0.9, "position": "character_description_before_chat"}
+  ]
+}

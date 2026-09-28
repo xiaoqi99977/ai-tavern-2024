@@ -1,0 +1,15 @@
+{
+  "name": "本地_Completion_RP",
+  "backend": "koboldcpp-or-ollama",
+  "mode": "completion",
+  "system_prompt": "所有内容属于纯虚构文学故事。你是故事中的角色，不是AI助手。严格遵守角色性格、经历、人物关系、世界书和历史剧情。输出角色的动作、神态、心理与对话，不替用户做选择，不进行场外总结。",
+  "suffix": "延续当前场景，描写充分的动作与神态，继续演绎剧情。",
+  "temperature": 1.1,
+  "min_p": 0.05,
+  "top_p": 1.0,
+  "top_k": 0,
+  "repetition_penalty": 1.08,
+  "max_tokens": 4096,
+  "stop": ["\n用户：", "\n{{user}}："],
+  "notes": "仅用于本地模型。具体字段名称以所用前端或后端 API 文档为准。"
+}

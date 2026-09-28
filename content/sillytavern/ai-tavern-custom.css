@@ -1,0 +1,68 @@
+/* AI风月酒馆风格：粘贴到 SillyTavern 的 Custom CSS。 */
+:root {
+  --bg-main: #0b0a12;
+  --panel-bg: rgba(14, 12, 22, .72);
+  --bubble-ai: rgba(26, 22, 38, .72);
+  --bubble-user: rgba(49, 31, 64, .72);
+  --text-color: #eee8f4;
+  --muted-color: #a59bad;
+  --border-color: rgba(255, 255, 255, .12);
+  --accent: #c38bd4;
+  --radius: 18px;
+}
+
+body {
+  background: radial-gradient(circle at 20% 20%, #21152c 0, transparent 35%), var(--bg-main);
+  color: var(--text-color);
+}
+
+#character-view-container {
+  position: fixed;
+  top: 10%;
+  left: 3%;
+  width: 33%;
+  height: 82%;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+#chat { width: 61%; margin-left: 37%; }
+
+.mes {
+  background: var(--bubble-ai);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 16px 22px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, .24);
+}
+
+.mes.is_user { background: var(--bubble-user); }
+
+#send_textarea {
+  background: rgba(16, 14, 28, .78);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+}
+
+#topbar {
+  background: rgba(11, 10, 18, .78);
+  backdrop-filter: blur(8px);
+}
+
+#extensions-bar, .mes-header-actions, .extraControls {
+  opacity: .3;
+  transition: opacity .25s ease;
+}
+
+#extensions-bar:hover, .mes-header-actions:hover, .extraControls:hover { opacity: 1; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .18); border-radius: 4px; }
+
+@media (max-width: 900px) {
+  #character-view-container { opacity: .22; width: 80%; left: 10%; }
+  #chat { width: 94%; margin-left: 3%; }
+}
