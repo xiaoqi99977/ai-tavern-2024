@@ -3,42 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI酒馆 - 与AI角色互动</title>
+    <title>AI风月酒馆</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>🍺 AI酒馆</h1>
-            <p>在这里，你可以与各种AI角色聊天</p>
-        </header>
-        
-        <main class="main-content">
-            <aside class="characters-panel">
-                <h2>酒馆角色</h2>
-                <div id="characters-list" class="characters-list"></div>
-            </aside>
-            
-            <section class="chat-section">
-                <div class="chat-header" id="chat-header">
-                    <h2>选择一个角色开始聊天</h2>
+    <div class="page-shell">
+        <header class="topbar">
+            <div class="brand-block">
+                <div class="brand-mark">酒</div>
+                <div>
+                    <div class="brand-title">AI风月酒馆</div>
+                    <div class="brand-subtitle">角色扮演 · 虚构 · 夜色沉吟</div>
                 </div>
-                
-                <div class="chat-messages" id="chat-messages"></div>
-                
-                <div class="chat-input-area">
-                    <input 
-                        type="text" 
-                        id="message-input" 
-                        placeholder="输入你的消息..."
+            </div>
+
+            <div class="status-cluster">
+                <span class="status-label">后端</span>
+                <span id="backend-status" class="status-pill status-offline">检测中…</span>
+                <span class="status-label" style="margin-left: 20px;">场景</span>
+                <select id="scene-selector" class="scene-select">
+                    <option value="tavern">城南酒馆</option>
+                    <option value="rainy-night">烟雨楼夜景</option>
+                    <option value="library">旧书屋</option>
+                    <option value="alley">暗巷小桌</option>
+                </select>
+            </div>
+        </header>
+
+        <main class="layout">
+            <aside class="left-panel">
+                <div class="portrait-card">
+                    <div class="portrait-wrapper">
+                        <div id="portrait-emoji" class="portrait-emoji">🍺</div>
+                        <div id="portrait-expression" class="portrait-expression">normal</div>
+                    </div>
+                    <div id="portrait-name" class="portrait-name">老李</div>
+                    <div id="portrait-role" class="portrait-role">酒馆老板</div>
+                    <div id="portrait-desc" class="portrait-desc">
+                        经验丰富的酒馆老板，熟悉人情世故。
+                    </div>
+                </div>
+
+                <div class="character-status-panel">
+                    <div class="panel-title">角色状态</div>
+                    <div class="status-item">
+                        <span class="status-key">情绪</span>
+                        <span id="char-mood" class="status-value">平静</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-key">姿态</span>
+                        <span id="char-posture" class="status-value">站立</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-key">专注</span>
+                        <span id="char-focus" class="status-value">你</span>
+                    </div>
+                    <div class="expression-selector">
+                        <div class="selector-title">表情</div>
+                        <div class="expression-buttons">
+                            <button class="expr-btn" data-expr="normal">常态</button>
+                            <button class="expr-btn" data-expr="smile">微笑</button>
+                            <button class="expr-btn" data-expr="sad">伤感</button>
+                            <button class="expr-btn" data-expr="angry">愠怒</button>
+                            <button class="expr-btn" data-expr="surprised">惊讶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="role-panel">
+                    <div class="panel-title">酒馆角色</div>
+                    <div id="characters-list" class="characters-list"></div>
+                </div>
+            </aside>
+
+            <section class="chat-panel">
+                <div class="chat-header" id="chat-header">
+                    <div class="header-mini">当前角色</div>
+                    <h2>选择一位酒客</h2>
+                </div>
+
+                <div class="chat-messages-wrapper">
+                    <div id="chat-messages" class="chat-messages"></div>
+                </div>
+
+                <div class="history-toggle">
+                    <button id="history-btn" class="history-btn">📖 对话历史</button>
+                </div>
+
+                <div class="composer">
+                    <textarea
+                        id="message-input"
+                        rows="1"
+                        placeholder="把一句酒后话从嘴间放进月光里…"
                         disabled
-                    >
+                    ></textarea>
                     <button id="send-button" disabled>发送</button>
                 </div>
             </section>
+
+            <!-- 历史面板 -->
+            <div id="history-panel" class="history-panel hidden">
+                <div class="history-header">
+                    <h3>对话历史</h3>
+                    <button id="close-history" class="close-btn">✕</button>
+                </div>
+                <div id="history-content" class="history-content"></div>
+            </div>
         </main>
     </div>
-    
+
     <script src="script.js"></script>
 </body>
 </html>
