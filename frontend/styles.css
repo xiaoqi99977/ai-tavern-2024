@@ -1,258 +1,183 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+const API_BASE_URL = 'http://localhost:5000/api';
+
+let currentCharacterId = null;
+const characters = {};
+const conversations = {};
+
+async function init() {
+    await loadBackendStatus();
+    await loadCharacters();
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    color: #333;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.header {
-    background: rgba(0, 0, 0, 0.3);
-    color: white;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.header h1 {
-    font-size: 2.5em;
-    margin-bottom: 10px;
-}
-
-.header p {
-    font-size: 1.1em;
-    opacity: 0.9;
-}
-
-.main-content {
-    display: flex;
-    flex: 1;
-    gap: 20px;
-    padding: 20px;
-    overflow: hidden;
-}
-
-.characters-panel {
-    width: 250px;
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    overflow-y: auto;
-}
-
-.characters-panel h2 {
-    margin-bottom: 20px;
-    color: #667eea;
-    font-size: 1.3em;
-}
-
-.characters-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.character-card {
-    padding: 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #f9f9f9;
-}
-
-.character-card:hover {
-    border-color: #667eea;
-    background: #f0f4ff;
-    transform: translateX(5px);
-}
-
-.character-card.active {
-    border-color: #667eea;
-    background: #e8eeff;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-}
-
-.character-avatar {
-    font-size: 2em;
-    margin-bottom: 10px;
-}
-
-.character-name {
-    font-weight: bold;
-    font-size: 1.1em;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.character-role {
-    font-size: 0.9em;
-    color: #667eea;
-    margin-bottom: 5px;
-}
-
-.character-desc {
-    font-size: 0.85em;
-    color: #666;
-}
-
-.chat-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
-
-.chat-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.chat-header h2 {
-    font-size: 1.5em;
-}
-
-.chat-messages {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.message {
-    display: flex;
-    margin-bottom: 10px;
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+async function loadBackendStatus() {
+    const statusEl = document.getElementById('backend-status');
+    try {
+        const response = await fetch(`${API_BASE_URL}/health`);
+        const data = await response.json();
+        if (data && data.status === 'ok') {
+            statusEl.textContent = '在线';
+            statusEl.classList.remove('status-offline');
+            statusEl.classList.add('status-online');
+        } else {
+            statusEl.textContent = '离线';
+            statusEl.classList.remove('status-online');
+            statusEl.classList.add('status-offline');
+        }
+    } catch (error) {
+        statusEl.textContent = '离线';
+        statusEl.classList.remove('status-online');
+        statusEl.classList.add('status-offline');
     }
 }
 
-.message.user {
-    justify-content: flex-end;
+async function loadCharacters() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/characters`);
+        const data = await response.json();
+
+        data.forEach(character => {
+            characters[character.id] = character;
+            conversations[character.id] = [];
+        });
+
+        renderCharacters();
+
+        if (data.length > 0) {
+            const defaultCharacter = data[0];
+            selectCharacter(defaultCharacter.id, defaultCharacter, false);
+        }
+    } catch (error) {
+        console.error('Error loading characters:', error);
+        const listEl = document.getElementById('characters-list');
+        listEl.innerHTML = '<div class="empty-state">酒馆暂未开门，后端可能未启动。</div>';
+    }
 }
 
-.message.assistant {
-    justify-content: flex-start;
+function renderCharacters() {
+    const listEl = document.getElementById('characters-list');
+    listEl.innerHTML = '';
+
+    Object.values(characters).forEach(character => {
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'character-card';
+        card.dataset.characterId = character.id;
+
+        card.innerHTML = `
+            <span class="character-avatar">${character.avatar}</span>
+            <div class="character-meta">
+                <div class="character-name">${character.name}</div>
+                <div class="character-role">${character.role}</div>
+            </div>
+        `;
+
+        card.addEventListener('click', () => selectCharacter(character.id, character, true));
+        listEl.appendChild(card);
+    });
 }
 
-.message-content {
-    max-width: 70%;
-    padding: 12px 16px;
-    border-radius: 10px;
-    word-wrap: break-word;
-    line-height: 1.4;
+function selectCharacter(characterId, character, shouldClearHistory = true) {
+    currentCharacterId = characterId;
+
+    document.querySelectorAll('.character-card').forEach(card => {
+        card.classList.toggle('active', card.dataset.characterId === characterId);
+    });
+
+    document.getElementById('portrait-emoji').textContent = character.avatar || '🍺';
+    document.getElementById('portrait-name').textContent = character.name || '酒客';
+    document.getElementById('portrait-role').textContent = character.role || '角色';
+    document.getElementById('portrait-desc').textContent = character.description || '一位故事中的人。';
+
+    const header = document.getElementById('chat-header');
+    header.innerHTML = `
+        <div class="header-mini">当前角色</div>
+        <h2>${character.name}</h2>
+        <div class="header-desc">${character.description}</div>
+    `;
+
+    const messages = document.getElementById('chat-messages');
+    if (shouldClearHistory) {
+        messages.innerHTML = '';
+    }
+
+    const input = document.getElementById('message-input');
+    const button = document.getElementById('send-button');
+    input.disabled = false;
+    button.disabled = false;
+    input.focus();
 }
 
-.user .message-content {
-    background: #667eea;
-    color: white;
-    border-bottom-right-radius: 0;
+async function sendMessage() {
+    const input = document.getElementById('message-input');
+    const button = document.getElementById('send-button');
+    const message = input.value.trim();
+
+    if (!message || !currentCharacterId) return;
+
+    addMessage('user', message);
+    input.value = '';
+    input.disabled = true;
+    button.disabled = true;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/chat`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                character_id: currentCharacterId,
+                message: message
+            })
+        });
+
+        const data = await response.json();
+
+        if (data && data.success) {
+            addMessage('assistant', data.message || '…');
+        } else {
+            addMessage('assistant', data && data.error ? data.error : '酒馆里的灯忽然暗了一下。');
+        }
+    } catch (error) {
+        console.error('Error sending message:', error);
+        addMessage('assistant', '酒馆的门外有风，后端似乎没在这里等你。');
+    } finally {
+        input.disabled = false;
+        button.disabled = false;
+        input.focus();
+        autoResizeTextarea();
+    }
 }
 
-.assistant .message-content {
-    background: #e0e0e0;
-    color: #333;
-    border-bottom-left-radius: 0;
+function addMessage(role, content) {
+    const messages = document.getElementById('chat-messages');
+    const wrap = document.createElement('div');
+    wrap.className = `message-row ${role}`;
+
+    const bubble = document.createElement('div');
+    bubble.className = `message-bubble ${role}`;
+    bubble.textContent = content;
+
+    wrap.appendChild(bubble);
+    messages.appendChild(wrap);
+    messages.scrollTop = messages.scrollHeight;
 }
 
-.chat-input-area {
-    display: flex;
-    gap: 10px;
-    padding: 20px;
-    background: #f9f9f9;
-    border-top: 1px solid #e0e0e0;
+function autoResizeTextarea() {
+    const input = document.getElementById('message-input');
+    input.style.height = 'auto';
+    input.style.height = Math.min(input.scrollHeight, 180) + 'px';
 }
 
-#message-input {
-    flex: 1;
-    padding: 12px 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-    font-size: 1em;
-    transition: border-color 0.3s;
-}
+document.getElementById('send-button').addEventListener('click', sendMessage);
 
-#message-input:focus {
-    outline: none;
-    border-color: #667eea;
-}
+document.getElementById('message-input').addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+    autoResizeTextarea();
+});
 
-#message-input:disabled {
-    background: #f0f0f0;
-    cursor: not-allowed;
-}
+window.addEventListener('DOMContentLoaded', init);
 
-#send-button {
-    padding: 12px 30px;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-#send-button:hover:not(:disabled) {
-    background: #5568d3;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-#send-button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-#send-button:active:not(:disabled) {
-    transform: translateY(0);
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-    width: 8px;
-}
-
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #667eea;
-    border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #5568d3;
-}
+const textarea = document.getElementById('message-input');
+textarea.addEventListener('input', autoResizeTextarea);
